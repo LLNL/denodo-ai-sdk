@@ -134,7 +134,7 @@ async def deep_query_post(
         allow_external_associations=endpoint_request.allow_external_associations
     )
     
-    if not vector_search_tables:
+    if error_message:
         raise HTTPException(status_code=404, detail=error_message or "The vector search result returned 0 views. This could be due to limited permissions or an empty vector store.")
 
     # Format schema text using the same function as answerQuestion.py

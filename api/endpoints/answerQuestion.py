@@ -202,7 +202,7 @@ async def process_question(request_data: answerQuestionRequest, auth: str):
         allow_external_associations=request_data.allow_external_associations
     )
 
-    if not vector_search_tables:
+    if error_message:
         raise HTTPException(status_code=404, detail=error_message or "The vector search result returned 0 views. This could be due to limited permissions or an empty vector store.")
 
     # Combine custom instructions from environment and request

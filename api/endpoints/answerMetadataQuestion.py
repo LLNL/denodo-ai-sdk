@@ -189,7 +189,7 @@ async def process_metadata_question(request_data: answerMetadataQuestionRequest,
         logging.error(f"Resource initialization traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Error initializing resources: {str(e)}") from e
 
-    vector_search_tables, _, timings = await sdk_ai_tools.get_relevant_tables(
+    vector_search_tables, _, timings, error_message = await sdk_ai_tools.get_relevant_tables(
         query=request_data.question,
         vector_store=vector_store,
         sample_data_vector_store=sample_data_vector_store,
@@ -203,8 +203,8 @@ async def process_metadata_question(request_data: answerMetadataQuestionRequest,
         allow_external_associations=request_data.allow_external_associations
     )
 
-    if not vector_search_tables:
-        raise HTTPException(status_code=404, detail="The vector search result returned 0 views. This could be due to limited permissions or an empty vector store.")
+    if error_message:
+        raise HTTPException(status_code=404, detail=error_message or "The vector search result returned 0 views. This could be due to limited permissions or an empty vector store.")
 
     # Combine custom instructions from environment and request
     base_instructions = os.getenv('CUSTOM_INSTRUCTIONS', '')
